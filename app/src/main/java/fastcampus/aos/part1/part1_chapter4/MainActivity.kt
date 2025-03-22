@@ -5,11 +5,9 @@ import android.util.Log
 import android.view.View
 import android.widget.Button
 import android.widget.Toast
-import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
-import androidx.core.view.ViewCompat
-import androidx.core.view.WindowInsetsCompat
 import fastcampus.aos.part1.part1_chapter4.databinding.ActivityMainBinding
+import java.text.DecimalFormat
 
 class MainActivity : AppCompatActivity() {
 
@@ -18,6 +16,7 @@ class MainActivity : AppCompatActivity() {
     private val firstNumberText = StringBuilder("")
     private val secondNumberText = StringBuilder("")
     private val operatorText = StringBuilder("")
+    private val decimalFormat = DecimalFormat("#,###")
     private val hasOperator = false
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -49,17 +48,17 @@ class MainActivity : AppCompatActivity() {
             Toast.makeText(this, "올바르지 않은 수식입니다.", Toast.LENGTH_SHORT).show()
             return
         }
-        val firstNumber = firstNumberText.toString().toInt()
-        val secondNumber = secondNumberText.toString().toInt()
+        val firstNumber = firstNumberText.toString().toBigDecimal()
+        val secondNumber = secondNumberText.toString().toBigDecimal()
         val result = when (operatorText.toString()) {
-            "+" -> firstNumber + secondNumber
-            "-" -> firstNumber - secondNumber
+            "+" -> decimalFormat.format(firstNumber + secondNumber)
+            "-" -> decimalFormat.format(firstNumber - secondNumber)
             else -> {
                 Toast.makeText(this, "올바르지 않은 수식입니다.", Toast.LENGTH_SHORT).show()
             }
-        }
+        }.toString()
 
-        binding.resultTextView.text = result.toString()
+        binding.resultTextView.text = result
 
         firstNumberText.clear()
         secondNumberText.clear()
@@ -84,7 +83,10 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun updateEquationTexView() {
-        binding.equationTextView.text = "$firstNumberText $operatorText $secondNumberText"
+        val firstFormattedNumber = if (firstNumberText.isNotEmpty()) decimalFormat.format(firstNumberText.toString().toBigDecimal()) else ""
+        val secondFormattedNumber = if (secondNumberText.isNotEmpty()) decimalFormat.format(secondNumberText.toString().toBigDecimal()) else ""
+
+        binding.equationTextView.text = "$firstFormattedNumber $operatorText $secondFormattedNumber"
     }
 
 }
